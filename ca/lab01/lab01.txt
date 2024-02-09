@@ -1,0 +1,4 @@
+Python: 699.376970
+C basic (ijk): 12.401172
+C optimized (ikj): 5.069127
+C incorrectly optimized (jki): 13.658205
