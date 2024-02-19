@@ -1,0 +1,20 @@
+	.text
+main:
+	  addi a7, zero, 5
+          ecall
+          add t0, zero, a0
+
+          addi a7, zero, 5
+          ecall
+          add t1, zero, a0  
+         
+	 addi t1, t1, 3
+	 beq t0, t1, equal
+	 addi t2, t2, 1
+	 j end
+equal:
+         addi t2, t2, 0
+end:
+          add a0, zero, t2
+          addi a7, zero, 1
+          ecall 
