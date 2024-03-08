@@ -1,0 +1,129 @@
+.data 
+ans_space:
+    .string " "
+
+.macro read_int (%x)
+li a7, 5
+ecall
+addi %x, a0, 0
+
+.end_macro
+
+.macro print_int (%x)
+add a0, zero, %x
+li a7, 1
+ecall 
+
+li a0, 10  
+li a7, 11
+ecall
+.end_macro
+
+.macro print_int1 (%x)
+add a0, zero, %x
+li a7, 1
+ecall 
+li a7, 4
+la a0, ans_space
+mv a1, zero
+ecall
+.end_macro
+
+.macro end
+    li a7, 93
+    li a0, 10
+    ecall
+.end_macro    
+    
+.macro print_str (%x)
+    li a7, 4
+    la a0, %x
+    mv a1, zero
+    ecall
+.end_macro
+
+.macro print_float(%x)
+    li a7, 3
+    fmv.d  fa0, %x
+    ecall 
+    li a0, 10  
+    li a7, 11
+    ecall
+.end_macro
+
+.macro print_round_float (%x, %n)
+    li t3, 10
+    li t1, 1
+    add t0, %n, zero
+
+    for:
+    beqz t0, continue
+    mul t1, t1, t3
+    addi t0, t0, -1
+    j for
+    continue:
+
+    fcvt.d.wu  ft1, t1, dyn
+    fmul.d  fs0, ft1, %x, dyn
+    
+    fcvt.w.d t2, fs0, dyn
+    fcvt.d.w  fs0, t2, dyn
+    
+    fdiv.d ft0, fs0, ft1
+
+    li a7, 3
+    fadd.d  fa0, ft0, ft11, dyn
+    ecall 
+    li a0, 10  
+    li a7, 11
+    ecall
+    
+.end_macro
+
+.macro print_empty
+    li a0, 10  
+    li a7, 11
+    ecall
+.end_macro
+.macro read_double (%reg)
+    li a7, 7
+    ecall
+    fmv.d %reg, fa0
+.end_macro
+
+.text
+main:
+    read_int(a2)
+    
+    fmv.d fs2, fa1
+    
+    li t1,1
+    fcvt.d.w ft1, t1, dyn
+
+    li t5,2
+    fcvt.d.w ft5, t5, dyn
+    
+    fmv.d ft2, ft1
+    
+    li t4, 10000
+    
+for:
+    beq t3, t4, end
+    
+    fdiv.d fs1, ft1, ft2, dyn
+    fadd.d fs2, fs2, fs1, dyn
+    fneg.d ft1, ft1
+    fadd.d ft2, ft2, ft5
+    addi t3, t3, 1
+    j for
+
+    
+end:
+   li t6,4
+   fcvt.d.w ft6, t6, dyn
+   fmul.d fs2, fs2, ft6, dyn
+   print_round_float(fs2, a2)    
+    
+    
+    
+       
